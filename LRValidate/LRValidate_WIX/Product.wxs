@@ -3,10 +3,10 @@
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
 
   <?if $(var.Platform) = x64 ?>
-  <?define ProductName = "Lightroom Validate (64 bit)" ?>
+  <?define ProductName = "LRValidate (64 bit) for Adobe Lightroom(R)" ?>
   <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
   <?else ?>
-  <?define ProductName = "Lightroom Validate" ?>
+  <?define ProductName = "LRValidate (32 bit) for Adobe Lightroom(R)" ?>
   <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
   <?endif ?>
 
