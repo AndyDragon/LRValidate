@@ -1,0 +1,36 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Name="ReviewErrorsWindow" mc:Ignorable="d" x:Class="LRValidate.ReviewErrors"
+        Title="Review Validation Errors" Closing="Window_Closing" SizeToContent="WidthAndHeight" MaxHeight="{Binding SystemParameters.MaximizedPrimaryScreenHeight}" MaxWidth="{Binding SystemParameters.MaximizedPrimaryScreenWidth}" Loaded="Window_Loaded">
+    <Grid Style="{StaticResource MyGrid}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Error Display" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="16" Grid.Row="0" Foreground="#FF390881" FontWeight="Bold"/>
+        <StackPanel  Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" Orientation="Vertical">
+            <TextBlock Text="You can sort the list by clicking on a header column." />
+            <TextBlock Text="To see more details or to resolve items, select one or more and right click." />
+            <TextBlock Text="Select rows and rightclick for options, click column headers to sort:" />
+        </StackPanel>
+        <Image Grid.Row="0" Grid.Column="2" Source="Logo_Web.gif" Width="60" HorizontalAlignment="Right"/>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Auto" Grid.ColumnSpan="3" >
+            <DataGrid x:Name="NewErrorGrid" HorizontalAlignment="Left" Margin="10,10,0,0" IsReadOnly="True" SelectionMode="Extended" BorderBrush="#FF3410AE" Background="#FFEEEADA" AlternatingRowBackground="#FFE4E0E6">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Ignore Error now but check again on Revalidate/Find New" Click="ContextMenuClick_Ignore"></MenuItem>
+                        <MenuItem Header="Accept Checksum Difference (checksum errors only)" Click="ContextMenuClick_Accept"></MenuItem>
+                        <MenuItem Header="Display More Information" Click="ContextMenuClick_Show"></MenuItem>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </ScrollViewer>
+    </Grid>
+</Window>

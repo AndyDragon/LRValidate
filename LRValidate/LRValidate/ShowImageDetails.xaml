@@ -1,0 +1,92 @@
+﻿<Window x:Class="LRValidate.ShowImageDetails"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ShowImageDetails" Loaded="Window_Loaded" SizeToContent="WidthAndHeight">
+    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid Margin="0,0,0,0" Style="{StaticResource MyGrid}" Height="{Binding ElementName=_page, Path=ActualHeight.Value}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" VerticalAlignment="Bottom">
+                <TextBlock Text="Validation Error Display" HorizontalAlignment="Left" Margin="10,10,50,0" VerticalAlignment="Top" FontSize="20"  Foreground="#FF390881" FontWeight="Bold"/>
+                <Button x:Name="UpArrow" FontFamily="Marlett" Margin="10,0,0,0" FontSize="20" Content="5" Height="20" Click="UpArrow_Click" VerticalAlignment="Center" ToolTipService.ShowOnDisabled="True" ToolTip="Click to advance to the next image selected (if any)"/>
+                <TextBlock x:Name="SelectedItemBox"  Margin="5,0,0,0" TextWrapping="Wrap" Text="SelectedItemBox"  Height="auto" VerticalAlignment="Center"/>
+                <Button x:Name="DownArrow" FontFamily="Marlett" Margin="5,0,0,0" FontSize="20" Content="6"  Height="20" Click="DownArrow_Click"  VerticalAlignment="Center" ToolTipService.ShowOnDisabled="True" ToolTip="Click to go back to the prior image selected (if any)"/>
+                <TextBlock Text="of" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="SelectedOfBox"  Margin="5,0,0,0" TextWrapping="Wrap" Text="SelectedOfBox" VerticalAlignment="Center" />
+                <Image Margin="30,0,0,0" Source="Logo_Web.gif" Width="60" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            </DockPanel>
+
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Image ID (Internal to Lightroom): " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" FontWeight="Bold" />
+                <TextBlock x:Name="ImageIDBox" HorizontalAlignment="Left" Margin="10,10,0,0" Text="ImageIDBox" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="This is the number by which Lightroom internally knows an image (I don't think it is visible inside of the Lightroom interface)" />
+
+                <TextBlock Text="Disk Location (per Lightroom now):" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" FontWeight="Bold" />
+                <TextBlock x:Name="ImagePathLRBox" HorizontalAlignment="Left" Margin="10,10,0,0" Text="ImagePathLRBox" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" ToolTipService.ShowOnDisabled="True" ToolTip="This is where Lightroom right now thinks the image file resides."/>
+
+                <TextBlock Text="Image Location (last validated if any): " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0" FontWeight="Bold" />
+                <TextBlock x:Name="ImagePathLastBox" HorizontalAlignment="Left" Margin="10,10,0,0" Text="ImagePathLastBox" VerticalAlignment="Top" Grid.Row="2" Grid.Column="1"  TextWrapping="Wrap" ToolTipService.ShowOnDisabled="True" ToolTip="This is where the image resided the last time it was validated by this program.  This does NOT reflect moves done within lightroom (and it is not where this program looks now), it is for your information in case you have some file-movement issues."/>
+
+                <TextBlock Text="Last Time Validated (if any): " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.Row="3" Grid.Column="0" FontWeight="Bold" />
+                <TextBlock x:Name="LastTimeValidatedBox" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="LastTimeValidatedBox" VerticalAlignment="Top" Grid.Row="3" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="This is when the file was last successfully validated by this program."/>
+
+                <TextBlock Text="Initial Time Validated (if any): " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.Row="4" Grid.Column="0" FontWeight="Bold" />
+                <TextBlock x:Name="InitialTimeValidatedBox" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="InitialTimeValidatedBox" VerticalAlignment="Top" Grid.Row="4" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="This is when the file was initially validated (not revalidated) by this program.  Note if the file is changed, and the changes accepted, this time does NOT change."/>
+
+                <TextBlock Text="Error Encounted Time:" Margin="10,10,0,0"  Grid.Row="5" Grid.Column="0" FontWeight="Bold"/>
+                <TextBlock x:Name="ErrorTimeBox" Margin="10,10,0,0" TextWrapping="Wrap" Text="ErrorTimeBox" Grid.Row="5" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="Time at which this particular error was discovered (once in this list, no further attempts are made to validate until this error is cleared)."/>
+
+                <TextBlock Text="Error Encountered:" Margin="10,10,0,0" Grid.Row="6" Grid.Column="0" FontWeight="Bold"/>
+                <TextBlock x:Name="ErrorBlock" Margin="10,10,0,0" TextWrapping="Wrap" Text="ErrorBlock" Grid.Row="6" Grid.Column="1" MaxWidth="800" ToolTipService.ShowOnDisabled="True" ToolTip="What error was encountered during validation."/>
+
+                <TextBlock Text="Action Suggested:" Margin="10,10,0,0"  Grid.Row="7" Grid.Column="0" FontWeight="Bold"/>
+                <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Vertical">
+                    <TextBlock x:Name="ActionBlock" Margin="10,10,0,0" TextWrapping="Wrap" Text="ActionBlock" Grid.Row="8" Grid.Column="1" MaxWidth="800" ToolTipService.ShowOnDisabled="True" ToolTip="Vague recommendation of what action to take - read and investigate carefully yourself however." />
+                    <UniformGrid HorizontalAlignment="Left" Rows="2" Columns="1">
+                        <Button Name="IgnoreBtn" Content="Ignore for Now" Margin="10,5,0,0" Width="auto" Click="AcceptBtn_or_IgnoreBtn_Click" ToolTipService.ShowOnDisabled="True" ToolTip="Remove this error from the list (but no other action); this will cause the program to either initially validate, or re-validate the next time you do a run."/>
+                        <Button Name="AcceptBtn" Content="Accept New Checksum" Margin="10,5,0,0" Width="auto" Click="AcceptBtn_or_IgnoreBtn_Click" ToolTipService.ShowOnDisabled="True" ToolTip="This button is only available for files that are found to have changed, and let's you accept the changes as valid."/>
+                    </UniformGrid>
+                </StackPanel>
+            
+            </Grid>
+
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Content="Image in Lightroom Previews" Margin="0,10,10,0" FontWeight="Bold" FontSize="14" BorderThickness="0,0,0,3" BorderBrush="Black"  HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" />
+                <Label x:Name="PreviewCacheLoadingLabel" Content="Loading" Margin="10,0,0,0" Visibility="Hidden" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+                <Image x:Name="PreviewCache" Margin="5,0,5,5" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" MaxWidth="500" ToolTipService.ShowOnDisabled="True" ToolTip="Thi sis the image as seen in the lightroom preview cache (it is not necessarily an error for their to be no preview; you can regenerate them in lightroom).  This will not be present for video."/>
+                <Label Content="Image on Disk Per Lightroom Now (unedited)" Margin="0,10,10,0" FontWeight="Bold" FontSize="14"  BorderThickness="0,0,0,3" BorderBrush="Black" HorizontalAlignment="Center"  Grid.Row="0" Grid.Column="1"/>
+                <Label x:Name="LRImageLoadingLabel" Content="Loading" Margin="0,0,0,0"  Visibility="Hidden" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="1"/>
+                <Image x:Name="LRImage" Margin="5,0,5,5"  HorizontalAlignment="Stretch"  Grid.Row="2" Grid.Column="1" MaxWidth="500" ToolTipService.ShowOnDisabled="True" ToolTip="Image, roughly, as it appears on disk. This display depends on the OS Codecs loaded, so raw files may or may not appear depending on your configuration (you can download and install codecs for most raw formats). This is a rough preview image for raw files, and not detailed.  It does NOT contain lightroom edits for raw files, including crops, and may not be in the proper orientation if rotated by Lightroom."/>
+
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Window>

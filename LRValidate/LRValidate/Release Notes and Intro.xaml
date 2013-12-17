@@ -1,0 +1,27 @@
+﻿<Window x:Class="LRValidate.Release_Notes_and_Intro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Release_Notes_and_Intro">
+    <Grid>
+        <FlowDocumentScrollViewer>
+            <FlowDocument>
+            	<Paragraph TextAlignment="Center"><Run FontWeight="Bold" FontSize="21.333" Text="Release Notes" TextDecorations="Underline"/></Paragraph>
+            	<Paragraph><Run Text="Release 1.0.5.0: Initial Public Release."/></Paragraph>
+            	<Paragraph TextAlignment="Center"><Run FontWeight="Bold" FontSize="21.333" Text="Introduction and Use" TextDecorations="Underline"/></Paragraph>
+            	<Paragraph><Run Text="The basic flow of this program is: "/></Paragraph>
+            	<Paragraph><Run Text="1) Initialize a Lightroom catalog (which adds data to it to track validation)."/></Paragraph>
+            	<Paragraph><Run Text="2)  Scan all files for validity. At present this just checks that they can be read and a checksum calculated - no internal image validity checking is done."/></Paragraph>
+            	<Paragraph><Run Text="3) Periodically but frequently (usually after incorporating a lot of new images) - scan for new images so it knows about them (Find New)."/></Paragraph>
+            	<Paragraph><Run Text="4) Periodically go back and re-validate old images to make sure they remain unchanged, and accept and review any issues."/></Paragraph>
+                <Paragraph><Run Text="The program does not modify ANY of the lightroom tables, it uses the catalog to maintain separate tables.  The data is stored inside of the lightroom catalog so that the SQLite operations required can read from Lightroom tables."/></Paragraph>
+                <Paragraph><Run Text="While this should be completely invisible to Lightroom, it is of course wise to backup your catalog before using this program, and on a regular basis regardless of whether you use this program."/></Paragraph>
+            	<Paragraph><Run  FontWeight="Bold" FontSize="21.333" Text="Usage Notes: "/></Paragraph>
+            	<Paragraph><Run Text="A key goal of this program is to detect unwanted changes in files, such as from disk errors. This is predicated on the idea you are using Lightroom to edit Raw files, and so they should not change.  There are several circumstances that your workflow may cause correct changes, for example:" /></Paragraph>
+            	<Paragraph><Run Text="1) If you edit in other programs so that TIFF's (etc) are saved instead of raw files, each edit represents a change. If you revalidate after such a change, it shows up as a checksum difference. If you only edit newer files, this may not be an issue, but otherwise you will see each such edit show up during revalidation.  You need only 'accept' them, but if this becomes annoying the program may not be for you."/></Paragraph>
+            	<Paragraph><Run Text="2) If you change metadata AND have Lightroom set to automatically save metadata, it will change all files affected.  Mass changes such as keywords can have impact large numbers of images.  Writting metadata automatically AND using non-Raw files AND changing old metadata is not very compatible with this program."/></Paragraph>
+                <Paragraph><Run Text="3) Similarly, if you change metadata on old images AND have non-raw files AND do a Write Metadata they are flagged as errors.  This is more manageable, however- do a revalidate just before (so you have a baseline) then another just after, and you can 'accept' all the differences just after."/></Paragraph>
+                <Paragraph><Run Text="It is worth noting that many of these features are available inside Lightroom itself, such as identifying which images are missing.  The most important function, detecting unexpected file changes, is not addressed by lightroom except in DNG files."/></Paragraph>
+            </FlowDocument>
+        </FlowDocumentScrollViewer>
+    </Grid>
+</Window>

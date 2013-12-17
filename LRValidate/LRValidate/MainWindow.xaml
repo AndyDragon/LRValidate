@@ -1,0 +1,120 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="LRValidate.MainWindow"
+        Title="MainWindow" SizeToContent="WidthAndHeight">
+    <Grid Background="{StaticResource MyGridBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+
+        <Image Grid.Row="0" Grid.Column="0" Source="Logo_Web.gif" Width="60" HorizontalAlignment="Right"/>
+        <TextBlock Text="Lightroom Image Validation" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" FontSize="30" Grid.Row="0" Grid.Column="0" Foreground="#FF370099"  />
+
+        <Border Grid.Row="1" Grid.Column="0" BorderThickness="2" BorderBrush="#FF370099" Margin="10,10,10,10">
+            <Grid Background="{StaticResource MyAreaBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Catalog" Grid.Row="0" Grid.Column="0" VerticalAlignment="center" HorizontalAlignment="Center" Grid.RowSpan="2" FontSize="14" Foreground="#FF370099" FontFamily="Cooper Black" >
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="-90"/>
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+
+                <Button x:Name="OpenDatabase" Content="Open Catalog" HorizontalAlignment="Left" Margin="5,5,5,5" VerticalAlignment="Bottom" Width="86" Click="OpenDatabase_Click" Grid.Row="0" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="After specifying the catalog, use this to open the file and do the initial validation"/>
+                <Button x:Name="Close_Catalog" Content="Close Catalog" HorizontalAlignment="Left" Margin="5,5,5,5" VerticalAlignment="Top" Width="87" Click="Close_Catalog_Click" Grid.Row="1" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="Close the catalog before exiting (note this will be disabled if tasks are running - stop those first)"/>
+
+                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
+                    <TextBlock x:Name="DatabaseStatusLbl"  Text="DatabaseStatusLbl" HorizontalAlignment="Left" Margin="10,0,0,5" VerticalAlignment="Top" Width="auto" TextWrapping="Wrap" FontSize="10" FontStyle="Italic" Foreground="#FFEC1212"/>
+                    <DockPanel>
+                        <Button x:Name="BrowseBtn" Content="Browse" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Width="Auto" Click="BrowseBtn_Click" Foreground="#FFFFF19A" ToolTipService.ShowOnDisabled="True" ToolTip="Click to invoke the OS file browser to find the catalog"/>
+                        <TextBox x:Name="CatalogFileSpec" Margin="10,0,20,0" VerticalAlignment="Top" ToolTipService.ShowOnDisabled="True" ToolTip="Provide the full path to the Lightroom Catalog to validate (the main .LRCAT file, not just the folder)" />
+                    </DockPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="Revalidate if last check before:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="auto"  TextWrapping="Wrap"/>
+                    <TextBox x:Name="RevalidateCutoffDateTime" HorizontalAlignment="Stretch" Height="auto" Margin="10,10,0,0" VerticalAlignment="Top" Width="auto" BorderThickness="1" MinWidth="60" LostFocus="RevalidateCutoffDateTime_LostFocus" ToolTipService.ShowOnDisabled="True" ToolTip="Cutoff date, does not validate anything more recently validated than this date"/>
+                    <Button x:Name="PickCutoffBtn" Content="Pick Cutoff" HorizontalAlignment="left" Margin="20,10,0,10" Click="PickCutoffBtn_Click" ToolTipService.ShowOnDisabled="True" ToolTip="Invoke a brief analysis of prior dates, and allow you to select a cutoff based on how many images will be revalidated."/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="0" BorderThickness="2" BorderBrush="#FF370099" Margin="10,10,10,10">
+            <Grid  Background="{StaticResource MyAreaBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Prepare" Grid.Row="0" Grid.Column="0" VerticalAlignment="center" HorizontalAlignment="Center" Grid.RowSpan="2"  FontSize="14"  Foreground="#FF370099"  FontFamily="Cooper Black">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="-90"/>
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+
+                <Button x:Name="InitDatabase" Content="Initialize" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Center" Width="87" Click="InitDatabase_Click" Grid.Row="0" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="Adds into a regular Lightroom catalog the tables necessary to track validation."/>
+                <TextBlock Text="Setup Lightroom Catalog for Validity Checking" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Center"  Grid.Row="0" Grid.Column="2" TextWrapping="Wrap"/>
+                <Button x:Name="CleanDatabase" Content="Cleanup" HorizontalAlignment="Left" Margin="10,10,0,10" VerticalAlignment="Center" Width="87" Click="CleanDatabase_Click"  Grid.Row="1" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="Remove validation tables and restores lightroom to the state before this program ran (all validation history lost)."/>
+                <TextBlock Text="Remove all validity checking data &amp; checksums" HorizontalAlignment="Left" Margin="10,10,0,10" VerticalAlignment="Center"  Grid.Row="1" Grid.Column="2"  TextWrapping="Wrap" />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="3" Grid.Column="0" BorderThickness="2" BorderBrush="#FF370099" Margin="10,10,10,10">
+            <Grid HorizontalAlignment="stretch" Height="auto" VerticalAlignment="Stretch" Width="auto"  Background="{StaticResource MyAreaBrush}" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Process" Grid.Row="0" Grid.Column="0" VerticalAlignment="center" HorizontalAlignment="Center" Grid.RowSpan="2"  FontSize="14"  Foreground="#FF370099"  FontFamily="Cooper Black">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="-90"/>
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+
+                <Button x:Name="FindNewBtn" Content="Find New ()" Margin="20,16,0,8" Click="FindNewBtn_Click" Height="auto" Width="auto" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="Find images which have not been validated yet, do initial checksums, and remember their state. Number shown is approximate number of images to process."/>
+                <Button x:Name="NewImagesInErrorBtn" Content="Fix New ()" Margin="20,16,0,8" Click="NewImagesInErrorBtn_Click" Width="auto" VerticalAlignment="Center" Grid.Row="0" Grid.Column="2" ToolTipService.ShowOnDisabled="True" ToolTip="Displays any errors (for your review or resolution) that were found during an initial validation check. Number shown is approximate number of images to process."/>
+                <TextBlock Text="Locate new images not previously recorded, and save their checksum." Margin="20,0,0,0" Grid.Row="0" Grid.Column="3" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                <Button x:Name="RevalidateBtn" Content="Revalidate ()" Margin="20,8,0,16" Click="RevalidateBtn_Click"  Width="auto" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTip="For images previously found and remembered as valid, will re-validate them to see if they have changed. Number shown is approximate number of images to process." />
+                <Button x:Name="ExistingImagesInErrorBtn" Content="Fix Revalidate ()" Margin="20,8,0,16" Click="ExistingImagesInErrorBtn_Click" Width="auto" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" ToolTipService.ShowOnDisabled="True" ToolTip="Display any errors found during revalidation, so you can resolve or find more info. Number shown is approximate number of images to process."/>
+                <TextBlock Text="Checks previously saved files for existence, and compares against previously saved checksum." Margin="20,0,0,0" Grid.Row="1" Grid.Column="3" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+        <TextBlock x:Name="ThreadString" HorizontalAlignment="Left" Text="junk" Grid.Row="4" Margin="10,0,0,0" VerticalAlignment="Center" ToolTipService.ShowOnDisabled="True" ToolTip="Most work is done in independent background threads - this shows how many are active."/>
+        <TextBlock Grid.Row="4" Margin="5,5,5,5" HorizontalAlignment="Center">
+            Brought to you courtesy of 
+            <Hyperlink NavigateUri="http://www.CaptivePhotons.com" RequestNavigate="Hyperlink_RequestNavigate" >
+                CaptivePhotons.com
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock x:Name="ReleaseNotesLabel" Text="Show Release Notes" HorizontalAlignment="right" VerticalAlignment="Bottom" Grid.Row="4" PreviewMouseLeftButtonUp="ReleaseNotesLabel_PreviewMouseLeftButtonUp" Margin="0,0,10,5" FontFamily="Aharoni" FontSize="10"/>
+
+    </Grid>
+</Window>

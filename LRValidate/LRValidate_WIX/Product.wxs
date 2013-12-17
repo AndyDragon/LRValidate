@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+
+  <?if $(var.Platform) = x64 ?>
+  <?define ProductName = "Lightroom Validate (64 bit)" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?else ?>
+  <?define ProductName = "Lightroom Validate" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?endif ?>
+
+  <?define MAINEXE=$(var.LRValidate.TargetFileName)?>
+  <?define VERSION=!(bind.FileVersion.$(var.MAINEXE))?>
+
+
+  <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="$(var.VERSION)" Manufacturer="CaptivePhotons.com" UpgradeCode="c9b0099a-0427-4740-8f48-6d3921153a50" >
+
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"  />
+    
+    <MajorUpgrade AllowSameVersionUpgrades='yes' AllowDowngrades='no' DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
+    
+    <MediaTemplate EmbedCab="yes"/>
+
+    <Property Id="PropVers" Value="$(var.VERSION)"/> <!-- Apparently you can't use a variable but can use a property to replace strings in the localization -->
+    
+    <PropertyRef Id="NETFRAMEWORK40CLIENT"/>
+    <Condition Message="This application requires .NET Framework 4.0. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK40CLIENT]]>
+    </Condition>
+    
+		<Feature Id="ProductFeature" Title="LRValidate_WIX" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="MyMenuDir"/>
+		</Feature>
+
+
+    <Property Id="DISABLEADVTSHORTCUTS" Value="1" />    <!--See http://stackoverflow.com/questions/2058230/wix-create-non-advertised-shortcut-for-all-users-per-machine-->
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="INSTALLFOLDER" Name="LightroomValidate">
+          <?if $(var.Platform) = x64 ?>
+            <Directory Id="INSTALLFOLDER_X64" Name="X64" />
+          <?else ?>
+            <Directory Id="INSTALLFOLDER_X86" Name="X86" />
+          <?endif ?>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="Lightroom Validate">
+          <Component Id="MyMenuDir" Guid="{29B1CB7C-6CF2-436C-BAB9-39C8C3A9C144}">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root="HKMU" Key="Software\LEFerguson\$(var.ProductName)" Type="string" Value="" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+	
+    <ComponentGroup Id="ProductComponents">
+    	<Component Id="MainExecutable" Directory="INSTALLFOLDER" Guid="{AE601054-D308-4B79-997A-CB56197F9437}" >
+        <File Source="$(var.LRValidate.TargetDir)LRValidate.exe" KeyPath="yes"/>
+        <Shortcut Id="LRShortcut" Directory="ProgramMenuDir" Name="Lightroom Validate" Description="Lightroom Validation Program" WorkingDirectory="INSTALLFOLDER" Advertise="yes" />
+        <File Source="$(var.LRValidate.TargetDir)LRValidate.exe.config"/>
+        <File Source="$(var.LRValidate.TargetDir)System.Data.SQLite.dll"/>
+      </Component>
+      <?if $(var.Platform) = x64 ?>
+        <Component Id="InteropX64" Directory="INSTALLFOLDER_X64" Guid="{6E007C74-3998-4584-A227-D97D3691A740}" >
+          <File Id="InteropX64File" Source="$(var.LRValidate.TargetDir)\X64\SQLite.Interop.dll"/>
+        </Component>
+      <?else?>
+        <Component Id="InteropX86" Directory="INSTALLFOLDER_X86" Guid="{5570825A-36E2-49B7-9C1F-4873C733E09B}" >
+          <File Id="InteropX86File" Source="$(var.LRValidate.TargetDir)\X86\SQLite.Interop.dll"/>
+        </Component>
+      <?endif?>
+    </ComponentGroup>
+
+    <WixVariable Id="WixUILicenseRtf" Value="MIT_license_statement.rtf" />
+    <WixVariable Id="WixUIDialogBmp" Value="Logo_Web.jpg" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <UIRef Id="WixUI_Minimal" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+    
+  </Product>
+</Wix>
