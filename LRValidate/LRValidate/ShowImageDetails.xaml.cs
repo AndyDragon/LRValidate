@@ -63,7 +63,7 @@ namespace LRValidate
             {   // try to delete and if so 
                 // First delete from our constructed selected array as it is gone from the (underlying but not connected) data table
                 Selected.Remove(l[0]);
-                currentInstance = currentInstance >= Selected.Count ? currentInstance-- : currentInstance; // If we were at the end, back up (otherwise we have implicitly advanced) 
+                currentInstance = currentInstance >= Selected.Count ? --currentInstance : currentInstance; // If we were at the end, back up (otherwise we have implicitly advanced) 
                 if (currentInstance < 0)
                 {
                     this.Close();  // If we have deleted all we had, simply exit; note that surprisingly this does not happen immediately, we need to exclude the following refresh from this path or it gives an error from having no data.
@@ -100,7 +100,7 @@ namespace LRValidate
             ErrorBlock.Text = Selected[currentInstance].Row.ItemArray[3].ToString();
             ActionBlock.Text = Selected[currentInstance].Row.ItemArray[4].ToString();
 
-            AcceptBtn.IsEnabled = !Selected[currentInstance].Row.ItemArray[2].ToString().Equals(string.Empty); // Turn off "Accept" unless it's a checksum error (checksum is in #2))
+            AcceptBtn.IsEnabled = (!Selected[currentInstance].Row.ItemArray[5].ToString().Equals(string.Empty) && !Selected[currentInstance].Row.ItemArray[2].ToString().Equals(string.Empty)); // Turn off "Accept" unless it's a checksum error (checksum is in #2) AND the old path is present
 
             LRImageLoadingLabel.Visibility = System.Windows.Visibility.Visible;
             LRImage.Source = null;
@@ -113,14 +113,23 @@ namespace LRValidate
                 bgw.CancelAsync();
             }
             bgw = new BackgroundWorker();
-            bgw.WorkerSupportsCancellation = true; 
-            bgw.DoWork += new DoWorkEventHandler(OriginalImageLoad_DoWork);  
+            bgw.WorkerSupportsCancellation = true;
+            bgw.DoWork += new DoWorkEventHandler(OriginalImageLoad_DoWork);
             bgw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(OriginalImageLoad_Completed);  // (s, e) =>  
             List<object> arguments = new List<object>();
-            arguments.Add(Selected[currentInstance].Row.ItemArray[5].ToString());
-            arguments.Add((int)LRImage.MaxWidth); 
+            if (Selected[currentInstance].Row.ItemArray[5].ToString() == string.Empty)
+            {  // If the lightroom path is empty, display the on-disk path 
+                arguments.Add(Selected[currentInstance].Row.ItemArray[6].ToString());
+                DiskImageLabel.Content = "Image on disk from last validation"; 
+            }
+            else
+            {  // display the lightroom path 
+                DiskImageLabel.Content = "Image on disk from LR catalog";
+                arguments.Add(Selected[currentInstance].Row.ItemArray[5].ToString());
+            }
+            arguments.Add((int)LRImage.MaxWidth);
             bgw.RunWorkerAsync(arguments);
-            System.Threading.Interlocked.Add(ref MainWindow.FileFetchThreadsRunning, 1); 
+            System.Threading.Interlocked.Add(ref MainWindow.FileFetchThreadsRunning, 1);
 
             // Handle the preview cache display 
             PreviewCache.Source = preview.GetPreview(int.Parse(ImageIDBox.Text), (int)(PreviewCache.MaxWidth * PreviewCache.MaxWidth));

@@ -145,13 +145,13 @@ namespace LRValidate
                     //      9 = Initial checksum Date/Time (null for new images) 
                     //      
                     //  Note that column labels ARE relevant for visibility (see below) but access is by ordinal position, so don't change either without care
-                    cmd.CommandText = "Select lve.ImageID, lve.ErrorDetectedDateTime, lve.InvalidChecksum, lve.ValidationError, lve.SuggestedAction, rf.absolutePath || lfo.pathFromRoot || lf.baseName || '.' ||  lf.extension as LRImagePath, lvi.oldPath, ai.orientation, lvi.LastValidateDateTime, lvi.InitialChecksumDateTime " +
+                    cmd.CommandText = "Select lve.ImageID, lve.ErrorDetectedDateTime, lve.InvalidChecksum, lve.ValidationError, lve.SuggestedAction, ifnull(rf.absolutePath || lfo.pathFromRoot || lf.baseName || '.' ||  lf.extension,'') as LRImagePath, lvi.oldPath, ai.orientation, lvi.LastValidateDateTime, lvi.InitialChecksumDateTime " +
                                         "from LightroomValidateErrors lve " +
                                         (ThisRunType == ReviewType.NewErrors ? "left " : "inner ") + "join LightroomValidateImages lvi on lvi.ImageID=lve.ImageID " +
                                         "left join Adobe_images ai on ai.id_local=lve.ImageID " +
-                                        "inner join AgLibraryFile lf on lf.id_local = ai.rootFile " +
-                                        "inner join AgLibraryFolder lfo on lfo.id_local = lf.folder " +
-                                        "inner join AgLibraryRootFolder rf on rf.id_local = rootFolder " +
+                                        "left join AgLibraryFile lf on lf.id_local = ai.rootFile " +
+                                        "left join AgLibraryFolder lfo on lfo.id_local = lf.folder " +
+                                        "left join AgLibraryRootFolder rf on rf.id_local = rootFolder " +
                                         "where ai.MasterImage is null " +
                                         (ThisRunType == ReviewType.NewErrors ? "  and lvi.ImageID is null " : string.Empty);
                     dataAdp = new System.Data.SQLite.SQLiteDataAdapter((System.Data.SQLite.SQLiteCommand)cmd);
@@ -186,6 +186,11 @@ namespace LRValidate
             dlg.Selected = NewErrorGrid.SelectedItems.Cast<System.Data.DataRowView>().ToList();
             dlg.Owner = this;
             dlg.ShowDialog();
+            if (Dt2.Rows.Count == 0)
+            {
+                this.Close();   // If we delete all the rows, just close up and go home
+            }
+            MainWindow.UpdateMainWindowInfo();   // Start an async update on the main window display to reflect what we just changed
         }
 
         private void ContextMenuClick_Ignore(object sender, RoutedEventArgs e) // Called from form by click uses selected items

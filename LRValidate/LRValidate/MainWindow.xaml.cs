@@ -730,10 +730,25 @@ namespace LRValidate
                         revalidateErrorsCnt++;
                     }
                 }
+                else if (currentImagePath == string.Empty)
+                {   // The file is not in the lightroom catalog, see if it's in the place of old-path and if so it is an error, if not it is OK
+                    if (File.Exists(oldPath))
+                    {  // File is still there, this is an error
+                        string checksum = GetMD5HashFromFile(oldPath);  // Calculate a checksum anyway so it doesn't look like a "new" item
+                        cmd.CommandText = "Insert into LightroomValidateErrors (ImageID, ErrorDetectedDateTime,  ValidationError, SuggestedAction, InvalidChecksum) values ("
+                                            + imageID.ToString() + ", strftime('%Y-%m-%dT%H:%M:%S','now','localtime'),  'Revalidation of file did not find the image in the catalog, but DID find it at the old location.', 'Confirm file wasn''t inappropriately removed from lightroom (or worse, lost by corruption). If removed on purpose, you should have deleted (or moved) the image.  Synchronize lightroom to recover to the catalog, and then either check the image for validity, or remove/delete it properly.  You cannot accept this error.','" + checksum + "')";
+                        revalidateErrorsCnt++;
+                    }
+                    else
+                    { // File is gone also, this is OK, delete from images also 
+                        cmd.CommandText = @"Delete from LightroomValidateImages where ImageID=" + imageID.ToString(); 
+                        // do not increment revalidate here as it's gone
+                    }
+                }
                 else
-                {   // File no longer exists 
+                {   // File no longer exists but is in the catalog
                     cmd.CommandText = "Insert into LightroomValidateErrors (ImageID, ErrorDetectedDateTime,  ValidationError, SuggestedAction) values ("
-                                        + imageID.ToString() + ", strftime('%Y-%m-%dT%H:%M:%S','now','localtime'),  'Revalidation of file did not find file at location Lightroom provided (" + currentImagePath + ").', 'Confirm file wasn''t inappropriately moved.  Last seen at (" + oldPath + "). If moved offline - NOT SUPPORTED YET.  Consider using Lightroom Find Missing.  Mark this item to ignore to revalidate (you cannot accept it).')";
+                                        + imageID.ToString() + ", strftime('%Y-%m-%dT%H:%M:%S','now','localtime'),  'Revalidation of file did not find file at location Lightroom provided (" + currentImagePath + ").', 'Confirm file wasn''t inappropriately removed, or lost, from the catalog. If you remove from a catalog, normally you delete from disk. Use Syncronize to re-import, then delete properly; mark to ignore this error and then revaldiate. You cannot accept this error.')";
                     revalidateErrorsCnt++;
                 }
                 cmd.ExecuteNonQuery();
@@ -747,11 +762,11 @@ namespace LRValidate
             // Main loop to revalidate all images, this is running in its own thread, as is each worker it spans
             List<object> gl = e.Argument as List<object>; // Pull out the arguments passed in
             string revalidateCutoffDateTimeString = (string)gl[0];
-            try
-            {
+            //try
+            //{
                 using (System.Data.Common.DbCommand cmd = DbConn.CreateCommand())
                 {
-                    cmd.CommandText = @"select ai.id_local as ImageID, rf.absolutePath || lfo.pathFromRoot || lf.baseName || '.' || lf.extension as currentImagePath, lvi.checksum, lvi.Oldpath, lvi.InitialChecksumDateTime, lvi.LastValidateDateTime " +
+                    cmd.CommandText = @"select lvi.ImageID, ifnull(rf.absolutePath || lfo.pathFromRoot || lf.baseName || '.' || lf.extension,'') as currentImagePath, lvi.checksum, lvi.Oldpath, lvi.InitialChecksumDateTime, lvi.LastValidateDateTime " +
                                         "from LightroomValidateImages lvi  " +
                                         "left join Adobe_images ai  on lvi.ImageID=ai.id_local " +
                                         "left join AgLibraryFile lf on lf.id_local = ai.rootFile " +
@@ -799,11 +814,11 @@ namespace LRValidate
                         UpdateMainWindowInfo();  // Do synchronous update here in case the last running update didn't
                     } // using imageReader
                 } // cmd
-            }
-            catch (Exception e2)
-            {
-                MessageBox.Show("Unexpected error in RevalidateAllImages, error=" + e2.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //}
+            //catch (Exception e2)
+            //{
+            //    MessageBox.Show("Unexpected error in RevalidateAllImages, error=" + e2.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
         }
 
         private void DoRevalidateWorkerDone(object sender, RunWorkerCompletedEventArgs e)
