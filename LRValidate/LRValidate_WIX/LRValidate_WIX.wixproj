@@ -57,17 +57,6 @@
     <Content Include="Logo_Web.jpg" />
     <Content Include="LRValidate_WIX.tfignore" />
     <Content Include="MIT_License_Statement.rtf" />
-    <Content Include="packages.config" />
-    <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="x64\" />
-    <Folder Include="x86\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LocalizationFile.wxl" />

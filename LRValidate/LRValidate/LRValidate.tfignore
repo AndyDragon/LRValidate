@@ -1,2 +1,3 @@
 ﻿# Ignore the SQLite files and any other DLL's
 *.dll
+./packages
