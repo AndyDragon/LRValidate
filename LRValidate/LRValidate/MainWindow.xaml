@@ -51,7 +51,6 @@
                 <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
                     <TextBlock Text="Revalidate if last check before:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="auto"  TextWrapping="Wrap"/>
                     <TextBox x:Name="RevalidateCutoffDateTime" HorizontalAlignment="Stretch" Height="auto" Margin="10,10,0,0" VerticalAlignment="Top" Width="auto" BorderThickness="1" MinWidth="60" LostFocus="RevalidateCutoffDateTime_LostFocus" ToolTipService.ShowOnDisabled="True" ToolTip="Cutoff date, does not validate anything more recently validated than this date"/>
-                    <Button x:Name="PickCutoffBtn" Content="Pick Cutoff" HorizontalAlignment="left" Margin="20,10,0,10" Click="PickCutoffBtn_Click" ToolTipService.ShowOnDisabled="True" ToolTip="Invoke a brief analysis of prior dates, and allow you to select a cutoff based on how many images will be revalidated."/>
                 </StackPanel>
             </Grid>
         </Border>

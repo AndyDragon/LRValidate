@@ -299,73 +299,6 @@ namespace LRValidate
             }
         }
 
-        private void PickCutoffBtn_Click(object sender, RoutedEventArgs e)
-        {
-            // Summarize the current database values, and divide them up and present some options for the user
-            int totalCounts;
-            try
-            {
-                using (System.Data.Common.DbCommand cmd = DbConn.CreateCommand())
-                {
-                    // We need the total so we can parse out the rows as they come in
-                    cmd.CommandText = @"select Count(*) as Count " +
-                                        "from LightroomValidateImages lvi   " +
-                                        "left join Adobe_images ai  on lvi.ImageID=ai.id_local  " +
-                                        "where not exists  " +
-                                        "           (select *  " +
-                                        "            from LightroomValidateErrors lve  " +
-                                        "            where lve.ImageID=lvi.ImageID)  " +
-                                        "group by  Substr(LastValidateDateTime,1,16) ";
-                    using (System.Data.Common.DbDataReader imageReader = cmd.ExecuteReader())
-                    {
-                        if (imageReader.Read())
-                        {
-                            totalCounts = imageReader.GetInt32(0);
-                        }
-                        else
-                        {
-                            MessageBox.Show("There are no items of any sort to revalidate, so you can't set the date/time with this routine", "No Items to Revalidate", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            return; // If there are no items then this call is irrelevant (message here?)
-                        }
-                    }
-                    cmd.CommandText = @"select LastValidateDateTime as Datetime, Count(*) as Count " +
-                                        "from LightroomValidateImages lvi   " +
-                                        "left join Adobe_images ai  on lvi.ImageID=ai.id_local  " +
-                                        "where not exists  " +
-                                        "           (select *  " +
-                                        "            from LightroomValidateErrors lve  " +
-                                        "            where lve.ImageID=lvi.ImageID)  " +
-                                        "group by  Substr(LastValidateDateTime,1,16) " +
-                                        "order by 1 desc";
-                    int lastBucket = -1;
-                    using (System.Data.Common.DbDataReader imageReader = cmd.ExecuteReader())
-                    {
-                        while (imageReader.Read())
-                        {
-                            if (lastBucket == -1 || (DateTimeArray[lastBucket].Count > (totalCounts / NumBuckets) && (lastBucket < NumBuckets - 1)))
-                            {
-                                DateTimeArray[++lastBucket].Datetime = imageReader.GetDateTime(imageReader.GetOrdinal("Datetime"));
-                                DateTimeArray[lastBucket].Count = 0; // We'll add below
-                            }
-                            DateTimeArray[lastBucket].Count += imageReader.GetInt32(imageReader.GetOrdinal("Count"));
-                        }
-                    }
-                    for (int i = lastBucket - 1; i >= 0; i--)
-                    {
-                        DateTimeArray[i].Count += DateTimeArray[i + 1].Count;
-                    }
-                    PickRevalidateTime dlg = new PickRevalidateTime();
-                    dlg.Owner = this;
-                    dlg.ShowDialog();
-                    UpdateMainWindowInfo();
-                }
-            }
-            catch (Exception e2)
-            {
-                MessageBox.Show("Unexpected exception in PickCutoffBtn_Click, exception=" + e2.Message, "Unexpected Error", MessageBoxButton.OK, MessageBoxImage.Stop);
-            }
-        }
-
         private void ReleaseNotesLabel_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Release_Notes_and_Intro dlg = new Release_Notes_and_Intro();
@@ -492,8 +425,7 @@ namespace LRValidate
             CleanDatabase.IsEnabled = (databaseHasOurTables == 1) && Close_Catalog.IsEnabled;  // We can't clean if we can't lose (for whatever reason)
             NewImagesInErrorBtn.IsEnabled = (ReviewErrorsNewErrors == null) && (databaseHasOurTables == 1) && newErrorsCnt > 0;
             ExistingImagesInErrorBtn.IsEnabled = (ReviewErrorsRevalidateErrors == null) && (databaseHasOurTables == 1) && revalidateErrorsCnt > 0;
-            PickCutoffBtn.IsEnabled = RevalidateCutoffDateTime.IsEnabled = (databaseHasOurTables == 1) && (revalidateFilesWorkerThread == null); // Match revalidate as that's when we parse the date the last time
-
+            
             NewImagesInErrorBtn.Content = NewButtonValue(NewImagesInErrorBtn.Content.ToString(), newErrorsCnt);
             ExistingImagesInErrorBtn.Content = NewButtonValue(ExistingImagesInErrorBtn.Content.ToString(), revalidateErrorsCnt);
             FindNewBtn.Content = NewButtonValue(FindNewBtn.Content.ToString(), newImagesCnt);
@@ -773,7 +705,8 @@ namespace LRValidate
                                         "left join AgLibraryFolder lfo on lfo.id_local = lf.folder " +
                                         "left join AgLibraryRootFolder rf on rf.id_local = rootFolder " +
                                         "where LastValidateDateTime < '" + revalidateCutoffDateTimeString.Replace(' ', 'T') + "' " +
-                                        "  and not exists (select * from LightroomValidateErrors lve where lve.ImageID=lvi.ImageID)";
+                                        "  and not exists (select * from LightroomValidateErrors lve where lve.ImageID=lvi.ImageID)" + 
+                                        "order by lvi.LastValidateDateTime asc ";
                     using (System.Data.Common.DbDataReader imageReader = cmd.ExecuteReader())
                     {
                         while (imageReader.Read() && !cancelGivenForProcessExisting)

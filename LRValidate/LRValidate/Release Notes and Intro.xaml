@@ -6,13 +6,16 @@
         <FlowDocumentScrollViewer>
             <FlowDocument>
             	<Paragraph TextAlignment="Center"><Run FontWeight="Bold" FontSize="21.333" Text="Release Notes" TextDecorations="Underline"/></Paragraph>
-            	<Paragraph><Run Text="Release 1.0.5.0: Initial Public Release."/></Paragraph>
+                <Paragraph><Run Text="Release 1.0.6.0: Remove the Pick Dates option, it was proving useless.  Change revalidation to always run so oldest (least recently validated) are revalidated first, so incremental runs can be done any time, and stopped any time, and the program picks up where it left off. Updated use instructions.  This release has been tested with Lightroom 5.4 and Windows 8.1x64."/></Paragraph>
+                <Paragraph><Run Text="Release 1.0.5.0: Initial Public Release."/></Paragraph>
             	<Paragraph TextAlignment="Center"><Run FontWeight="Bold" FontSize="21.333" Text="Introduction and Use" TextDecorations="Underline"/></Paragraph>
             	<Paragraph><Run Text="The basic flow of this program is: "/></Paragraph>
             	<Paragraph><Run Text="1) Initialize a Lightroom catalog (which adds data to it to track validation)."/></Paragraph>
             	<Paragraph><Run Text="2)  Scan all files for validity. At present this just checks that they can be read and a checksum calculated - no internal image validity checking is done."/></Paragraph>
             	<Paragraph><Run Text="3) Periodically but frequently (usually after incorporating a lot of new images) - scan for new images so it knows about them (Find New)."/></Paragraph>
-            	<Paragraph><Run Text="4) Periodically go back and re-validate old images to make sure they remain unchanged, and accept and review any issues."/></Paragraph>
+            	<Paragraph><Run Text="4) Periodically go back and re-validate old images to make sure they remain unchanged, and accept and review any issues. The program always does the oldest (least recently validated) first, so you can just run it as long as you want, and cancel any time -- it will pick up where it left off next time."/></Paragraph>
+                <Paragraph><Run Text="5) If you are methodically working through a very large catalog, you can avoid recently validated images and see the count of remaining images by including a cutoff date.  It will then not notice images last validated (or revalidated) after that date and time."/></Paragraph>
+                <Paragraph><Run Text="6) If you find errors, hit fix, then use the right-click menu to choose actions.  To check something in lightroom EXIT this program first, and exit lightroom before going back to this program (the ones found will still be available, without re-scan)."/></Paragraph>
                 <Paragraph><Run Text="The program does not modify ANY of the lightroom tables, it uses the catalog to maintain separate tables.  The data is stored inside of the lightroom catalog so that the SQLite operations required can read from Lightroom tables."/></Paragraph>
                 <Paragraph><Run Text="While this should be completely invisible to Lightroom, it is of course wise to backup your catalog before using this program, and on a regular basis regardless of whether you use this program."/></Paragraph>
             	<Paragraph><Run  FontWeight="Bold" FontSize="21.333" Text="Usage Notes: "/></Paragraph>

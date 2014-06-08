@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("LE Ferguson, LLC")]
 [assembly: AssemblyProduct("LRValidate")]
-[assembly: AssemblyCopyright("Copyright CaptivePhotons.com ©  2013")]
+[assembly: AssemblyCopyright("Copyright CaptivePhotons.com ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
